@@ -3,7 +3,7 @@ import geopandas as gpd
 import pandas as pd
 import numpy as np
 
-import base64
+import base64, pkg_resources
 
 def address_to_MAR(address):
   if type(address) is float or not " " in address:
@@ -192,7 +192,7 @@ def get_clusters(points, cluster_radius_miles=0.5, cluster_number_points=5):
 # takes dataframe[[lon,lat]]
 def get_ward(points):
   geo_points = gpd.GeoDataFrame(points, geometry = gpd.points_from_xy(points["lon"].to_list(), points["lat"].to_list()))
-  w_area = gpd.read_file("../shapefiles/Wards_from_2022.shp")
+  w_area = gpd.read_file(pkg_resources.resource_filename('dcgeotools', 'shapefiles/Wards_from_2022.shp'))
   w_results = gpd.sjoin(geo_points, w_area)
   w_results["index_right"] = w_results["index_right"].replace([0,1,2,3,4,5,6,7],[8,6,7,2,1,5,3,4])
   return w_results
@@ -202,7 +202,7 @@ def get_nhood(points, truncate=True):
   geo_points = gpd.GeoDataFrame(points, geometry = gpd.points_from_xy(points["lon"].to_list(), points["lat"].to_list()))
   ordered_dc_neighborhoods = ["Colonial Village, Shepherd Park, North Portal Estates", "Rock Creek Park", "Hawthorne, Barnaby Woods, Chevy Chase", "Takoma, Brightwood, Manor Park", "Walter Reed", "Lamont Riggs, Queens Chapel, Fort Totten, Pleasant Hill", "Friendship Heights, American University Park, Tenleytown", "Brightwood Park, Crestwood, Petworth", "North Cleveland Park, Forest Hills, Van Ness", "Fairfax Village, Naylor Gardens, Hillcrest, Summit Park", "Woodland/Fort Stanton, Garfield Heights, Knox Hill", "Saint Elizabeths", "Douglas, Shipley Terrace", "Congress Heights, Bellevue, Washington Highlands", "North Michigan Park, Michigan Park, University Heights", "Spring Valley, Palisades, Wesley Heights, Foxhall Crescent, Foxhall Village, Georgetown Reservoir", "Edgewood, Bloomingdale, Truxton Circle, Eckington", "Cathedral Heights, McLean Gardens, Glover Park", "Cleveland Park, Woodley Park, Massachusetts Avenue Heights, Woodland-Normanstone Terrace", "Woodridge, Fort Lincoln, Gateway", "Brookland, Brentwood, Langdon", "Columbia Heights, Mt. Pleasant, Pleasant Plains, Park View", "National Mall, Potomac River", "Howard University, Le Droit Park, Cardozo/Shaw", "Kalorama Heights, Adams Morgan, Lanier Heights", "Observatory Circle", "Dupont Circle, Connecticut Avenue/K Street", "Arboretum, Anacostia River", "Georgetown, Burleith/Hillandale", "Eastland Gardens, Kenilworth", "Ivy City, Arboretum, Trinidad, Carver Langston", "Shaw, Logan Circle", "Deanwood, Burrville, Grant Park, Lincoln Heights, Fairmont Heights", "Mayfair, Hillbrook, Mahaning Heights", "West End, Foggy Bottom, GWU", "Union Station, Stanton Park, Kingman Park", "Downtown, Chinatown, Penn Quarters, Mount Vernon Square, North Capitol Street", "River Terrace, Benning, Greenway, Dupont Park", "Capitol View, Marshall Heights, Benning Heights", "Capitol Hill, Lincoln Park", "Southwest Employment Area, Southwest/Waterfront, Fort McNair, Buzzard Point", "Twining, Fairlawn, Randle Highlands, Penn Branch, Fort Davis Park, Fort Dupont", "Near Southeast, Navy Yard", "Sheridan, Barry Farm, Buena Vista", "Historic Anacostia", "Joint Base Anacostia-Bolling"]
   if truncate: ordered_dc_neighborhoods = [n[:n.find(",")] for n in ordered_dc_neighborhoods]
-  n_area = gpd.read_file('../shapefiles/Neighborhood_Clusters.shp')
+  n_area = gpd.read_file(pkg_resources.resource_filename('dcgeotools', 'shapefiles/Neighborhood_Clusters.shp'))
   n_results = gpd.sjoin(geo_points, n_area)[["lat","lon","index_right"]]
   n_results["index_right"] = [ordered_dc_neighborhoods[i] for i in n_results["index_right"].to_list()]
   return n_results

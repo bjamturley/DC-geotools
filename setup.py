@@ -5,7 +5,7 @@ def readme():
         return f.read()
 
 setup(name="dcgeotools",
-      version="0.0.2",
+      version="0.0.3",
       author = "Ben Turley",
       author_email = "ben.turley@dc.gov",
       description = "DC MAR Geo-Toolset",
@@ -17,8 +17,9 @@ setup(name="dcgeotools",
           "rtree",
           "pandas",
           "geopandas",
-          "numpy",
+          "numpy"
       ],
       test_suite='nose.collector',
       tests_require=['nose'],
+      include_package_data=True,
       zip_safe=False)

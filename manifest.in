@@ -1,3 +1,3 @@
 include README.md
-include shapefiles/*.shp
-include shapefiles/*.shx
+include dcgeotools/shapefiles/*.shp
+include dcgeotools/shapefiles/*.shx
