@@ -195,6 +195,8 @@ def get_ward(points):
   w_area = gpd.read_file(pkg_resources.resource_filename('dcgeotools', 'shapefiles/Wards_from_2022.shp'))
   w_results = gpd.sjoin(geo_points, w_area)
   w_results["index_right"] = w_results["index_right"].replace([0,1,2,3,4,5,6,7],[8,6,7,2,1,5,3,4])
+  w_results = w_results[["geometry", "index_right"]]
+  w_results.index.names = ["ward"]
   return w_results
 
 # takes dataframe[[lon,lat]]
@@ -205,4 +207,5 @@ def get_nhood(points, truncate=True):
   n_area = gpd.read_file(pkg_resources.resource_filename('dcgeotools', 'shapefiles/Neighborhood_Clusters.shp'))
   n_results = gpd.sjoin(geo_points, n_area)[["lat","lon","index_right"]]
   n_results["index_right"] = [ordered_dc_neighborhoods[i] for i in n_results["index_right"].to_list()]
+  n_results.index.names = ["nhood"]
   return n_results

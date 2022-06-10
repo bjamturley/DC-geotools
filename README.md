@@ -117,7 +117,7 @@ Return shortened version of DC neighborhood names
 
 **Returns: *DataFrame(columns=["points", "nhood"])***
 
-points and neighborhood label
+point objects and neighborhood labels
 
 ### get_ward (points)
 Takes a set of points and returns the DC neighborhood which contains each point.
@@ -129,4 +129,4 @@ points to be warded
 
 **Returns: *DataFrame(columns=["points", "ward"])***
 
-points and ward label
+point objects and ward labels
