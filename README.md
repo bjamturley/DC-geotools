@@ -22,6 +22,7 @@ Takes string address removes/replaces MAR unfriendly elements.
 
 **Parameters:**
 - **address: *string***
+
 address to be converted
  
 **Returns: *string***
@@ -42,7 +43,7 @@ MAR API key
 
 - **batch_size: *int, default=40***
 
-when geocoding, number of addresses included in batch. batch geocoding is more efficient, however MAR has no error function for individual addresses and therefore the whole batch fails on error (i.e. bad address). the geocode function will default to single address testing for these batches.
+number of addresses included in batch. batch geocoding is more efficient, however MAR has no error function for individual addresses and therefore the whole batch fails on error (i.e. bad address). the geocode function will default to single address testing for these batches.
  
 **Returns: *DataFrame(columns=["lat", "lon", "type])***
 
