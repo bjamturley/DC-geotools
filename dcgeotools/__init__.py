@@ -108,7 +108,6 @@ def get_intersection(loc_data, apikey):
     return np.nan
   return np.nan
 
-# NOTE: Doesn't return Haversine distances and therefore will be inaccurate with point on a sphere (e.g. the Earth)
 # Accepts dataframe [[lat, lon]]
 # Returns dataframe [[cluster center (x,y), [points (x,y)]]]
 def get_clusters(points, cluster_radius_miles=0.5, cluster_number_points=5):
