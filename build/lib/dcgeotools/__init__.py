@@ -108,10 +108,28 @@ def get_intersection(loc_data, apikey):
     return np.nan
   return np.nan
 
-# NOTE: Doesn't return Haversine distances and therefore will be inaccurate with point on a sphere (e.g. the Earth)
 # Accepts dataframe [[lat, lon]]
 # Returns dataframe [[cluster center (x,y), [points (x,y)]]]
 def get_clusters(points, cluster_radius_miles=0.5, cluster_number_points=5):
+  def haversine(origin, destination):
+    origin_lat = math.radians(float(origin[0]))
+    origin_lon = math.radians(float(origin[1]))
+    destination_lat = math.radians(float(destination[0]))
+    destination_lon = math.radians(float(destination[1]))
+    lat_delta = destination_lat - origin_lat
+    lon_delta = destination_lon - origin_lon
+
+    # Radius of earth in meters
+    r = 6378127
+
+    # Haversine formula
+    a = math.sin(lat_delta / 2) ** 2 + math.cos(origin_lat) * math.cos(destination_lat) * math.sin(lon_delta / 2) ** 2
+    c = 2 * math.asin(math.sqrt(a))
+    meters_traveled = c * r
+
+    # return in miles
+    return meters_traveled * 0.000621371
+
   clusters = pd.DataFrame(columns=["center", "points"])
   if len(points) < cluster_number_points: return clusters
   point_pairs = []
@@ -124,7 +142,7 @@ def get_clusters(points, cluster_radius_miles=0.5, cluster_number_points=5):
       if i1 >= i2: continue
       p1_coords = [p1["lat"], p1["lon"]]
       p2_coords = [p2["lat"], p2["lon"]]
-      distance = math.sqrt(((int(p1_coords[0])-int(p2_coords[0]))**2)+((int(p1_coords[1])-int(p2_coords[1]))**2))
+      distance = haversine(p1_coords,p2_coords)
       # Out of range
       if np.isnan(distance) or distance > cluster_radius_miles: continue
       point_pairs.append([i1, i2, p1_coords, p2_coords, distance])
