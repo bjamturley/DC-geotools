@@ -7,7 +7,7 @@ import base64, pkg_resources
 
 def address_to_MAR(address):
   if type(address) is float or not " " in address:
-    address = "nan"
+    address = ""
   
   address = address.lower()
   if " apt" in address:

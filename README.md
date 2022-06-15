@@ -88,7 +88,7 @@ MAR API key
 results of query containing json dict "Result" portion of the MAR response for each input address
 
 ### get_intersection (loc_data, apikey)
-Queries the MAR service for an address or coordinate and returns an approximate intersection within 200 meters.
+Queries the MAR service for an address or coordinate and returns an approximate intersection/block within 200 meters.
 
 **Parameters:**
 - **loc_data: *string* or *point(lat, lon)***

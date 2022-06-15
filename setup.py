@@ -5,7 +5,7 @@ def readme():
         return f.read()
 
 setup(name="dcgeotools",
-      version="0.0.4",
+      version="0.0.5",
       author = "Ben Turley",
       author_email = "ben.turley@dc.gov",
       description = "DC MAR Geo-Toolset",
