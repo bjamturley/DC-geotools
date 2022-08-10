@@ -7,7 +7,7 @@ import base64, pkg_resources
 
 def address_to_MAR(address):
   if type(address) is float or not " " in address:
-    address = ""
+    address = "!{} Not an address".format(address)
   
   address = address.lower()
   if " apt" in address:
@@ -204,5 +204,5 @@ def get_nhood(points):
   ordered_dc_neighborhoods = ["SHEPHERD PARK","BARNABY WOODS","BRIGHTWOOD","CHEVY CHASE","LAMOND RIGGS","TENLEYTOWN","FOREST HILLS","BRIGHTWOOD PARK","WOODRIDGE","MICHIGAN PARK","PETWORTH","CATHEDRAL HEIGHTS","DC MEDICAL CENTER","WOODLEY PARK","MOUNT PLEASANT","COLUMBIA HEIGHTS","FORT LINCOLN/GATEWAY","BRENTWOOD","U ST/PLEASANT","ADAMS MORGAN","BLOOMINGDALE","SOUTH COLUMBIA HEIGHTS","GEORGETOWN EAST","GEORGETOWN","TRINIDAD","LOGAN CIRCLE/SHAW","UNION STATION","GWU","CHINATOWN","NATIONAL MALL","KINGMAN PARK","STADIUM ARMORY","FORT DUPONT","HILL EAST","MARSHALL HEIGHTS","SW/WATERFRONT","TWINING","NAYLOR/HILLCREST","NAVAL STATION & AIR FORCE","HISTORIC ANACOSTIA","DOUGLASS","CONGRESS HEIGHTS/SHIPLEY","BELLEVUE","WASHINGTON HIGHLANDS","16th ST HEIGHTS","KENT/PALISADES","EDGEWOOD","EASTLAND GARDENS","LINCOLN HEIGHTS","CAPITOL HILL","SAINT ELIZABETHS"]
   n_area = gpd.read_file(pkg_resources.resource_filename('dcgeotools', 'shapefiles/DC_Health_Planning_Neighborhoods.shp'))
   n_results = gpd.sjoin(geo_points, n_area)[["geometry","index_right"]].rename(columns={"index_right":"nhood"})
-  n_results["nhood"] = [ordered_dc_neighborhoods[i] for i in n_results["index_right"].to_list()]
+  n_results["nhood"] = [ordered_dc_neighborhoods[i] for i in n_results["nhood"].to_list()]
   return n_results
