@@ -111,18 +111,18 @@ Takes a set of points and returns the DC neighborhood which contains each point.
 
 points to be neighborhooded
 
-**Returns: *DataFrame(columns=["points", "index_right"])***
+**Returns: *DataFrame(columns=["points", "nhood"])***
 
 point objects and neighborhood labels with original index numbers
 
 ### get_ward (points)
-Takes a set of points and returns the DC neighborhood (index_right) which contains each point
+Takes a set of points and returns the DC neighborhood which contains each point
 
 **Parameters:**
 - **points : *DataFrame(columns=["lat", "lon"])***
 
 points to be warded
 
-**Returns: *DataFrame(columns=["points", "index_right"])***
+**Returns: *DataFrame(columns=["points", "ward"])***
 
-point objects and ward labels (index_right) with original index numbers
+point objects and ward labels with original index numbers

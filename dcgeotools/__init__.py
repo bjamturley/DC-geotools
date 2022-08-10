@@ -193,9 +193,9 @@ def get_clusters(points, cluster_radius_miles=0.5, cluster_number_points=5):
 def get_ward(points):
   geo_points = gpd.GeoDataFrame(points, geometry = gpd.points_from_xy(points["lon"].to_list(), points["lat"].to_list()))
   w_area = gpd.read_file(pkg_resources.resource_filename('dcgeotools', 'shapefiles/Wards_from_2022.shp'))
-  w_results = gpd.sjoin(geo_points, w_area)
-  w_results["index_right"] = w_results["index_right"].replace([0,1,2,3,4,5,6,7],[8,6,7,2,1,5,3,4])
-  w_results = w_results[["geometry", "index_right"]]
+  w_results = gpd.sjoin(geo_points, w_area)[["geometry", "index_right"]].rename(columns={"index_right":"ward"})
+  w_results["ward"] = w_results["ward"].replace([0,1,2,3,4,5,6,7],[8,6,7,2,1,5,3,4])
+  w_results = w_results
   return w_results
 
 # takes dataframe[[lon,lat]]
@@ -203,6 +203,6 @@ def get_nhood(points):
   geo_points = gpd.GeoDataFrame(points, geometry = gpd.points_from_xy(points["lon"].to_list(), points["lat"].to_list()))
   ordered_dc_neighborhoods = ["SHEPHERD PARK","BARNABY WOODS","BRIGHTWOOD","CHEVY CHASE","LAMOND RIGGS","TENLEYTOWN","FOREST HILLS","BRIGHTWOOD PARK","WOODRIDGE","MICHIGAN PARK","PETWORTH","CATHEDRAL HEIGHTS","DC MEDICAL CENTER","WOODLEY PARK","MOUNT PLEASANT","COLUMBIA HEIGHTS","FORT LINCOLN/GATEWAY","BRENTWOOD","U ST/PLEASANT","ADAMS MORGAN","BLOOMINGDALE","SOUTH COLUMBIA HEIGHTS","GEORGETOWN EAST","GEORGETOWN","TRINIDAD","LOGAN CIRCLE/SHAW","UNION STATION","GWU","CHINATOWN","NATIONAL MALL","KINGMAN PARK","STADIUM ARMORY","FORT DUPONT","HILL EAST","MARSHALL HEIGHTS","SW/WATERFRONT","TWINING","NAYLOR/HILLCREST","NAVAL STATION & AIR FORCE","HISTORIC ANACOSTIA","DOUGLASS","CONGRESS HEIGHTS/SHIPLEY","BELLEVUE","WASHINGTON HIGHLANDS","16th ST HEIGHTS","KENT/PALISADES","EDGEWOOD","EASTLAND GARDENS","LINCOLN HEIGHTS","CAPITOL HILL","SAINT ELIZABETHS"]
   n_area = gpd.read_file(pkg_resources.resource_filename('dcgeotools', 'shapefiles/DC_Health_Planning_Neighborhoods.shp'))
-  n_results = gpd.sjoin(geo_points, n_area)[["geometry","index_right"]]
-  n_results["index_right"] = [ordered_dc_neighborhoods[i] for i in n_results["index_right"].to_list()]
+  n_results = gpd.sjoin(geo_points, n_area)[["geometry","index_right"]].rename(columns={"index_right":"nhood"})
+  n_results["nhood"] = [ordered_dc_neighborhoods[i] for i in n_results["index_right"].to_list()]
   return n_results
