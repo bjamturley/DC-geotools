@@ -103,7 +103,7 @@ MAR API key
 
 intersection text
 
-### get_nhood (points, *truncate=True*)
+### get_nhood (points)
 Takes a set of points and returns the DC neighborhood which contains each point.
 
 **Parameters:**
@@ -111,22 +111,18 @@ Takes a set of points and returns the DC neighborhood which contains each point.
 
 points to be neighborhooded
 
-- **truncate: *bool,  default=True***
-
-Return shortened version of DC neighborhood names
-
-**Returns: *DataFrame(columns=["points", "nhood"])***
+**Returns: *DataFrame(columns=["points", "index_right"])***
 
 point objects and neighborhood labels with original index numbers
 
 ### get_ward (points)
-Takes a set of points and returns the DC neighborhood which contains each point.
+Takes a set of points and returns the DC neighborhood (index_right) which contains each point
 
 **Parameters:**
 - **points : *DataFrame(columns=["lat", "lon"])***
 
 points to be warded
 
-**Returns: *DataFrame(columns=["points", "ward"])***
+**Returns: *DataFrame(columns=["points", "index_right"])***
 
-point objects and ward labels with original index numbers
+point objects and ward labels (index_right) with original index numbers
