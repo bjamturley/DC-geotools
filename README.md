@@ -49,6 +49,18 @@ number of addresses included in batch. batch geocoding is more efficient, howeve
 
 latitude, longitude, and location type portion of the get_geodata() query
 
+### get_census (points)
+Takes a set of points and returns the DC census tract which contains each point
+
+**Parameters:**
+- **points : *DataFrame(columns=["lat", "lon"])***
+
+points to find census tract
+
+**Returns: *DataFrame(columns=["points", "census"])***
+
+point objects and census labels with original index numbers
+
 ### get_clusters (points, *cluster_radius_miles=0.5*, *cluster_number_points=5*)
 
 Groups points together based on proximity and frequency. It takes a list of coordinate points and finds all possible sets given a radius. All sets with the minimum cluster total (number of points per cluster) are kept. The program then selects the clusters with the maximum number of possible points so that all sets have no common elements. The cluster center and points per cluster is returned.
@@ -126,3 +138,15 @@ points to be warded
 **Returns: *DataFrame(columns=["points", "ward"])***
 
 point objects and ward labels with original index numbers
+
+### get_zipcode (points)
+Takes a set of points and returns the DC zip code which contains each point
+
+**Parameters:**
+- **points : *DataFrame(columns=["lat", "lon"])***
+
+points to find zip code
+
+**Returns: *DataFrame(columns=["points", "zipcode"])***
+
+point objects and zip code labels with original index numbers

@@ -43,18 +43,18 @@ def geocode(address_data, apikey, batch_size=40):
     if address_data[i*batch_size:(i*batch_size)+batch_size] == []: break
     addys = [address_to_MAR(addy) for addy in address_data[i*batch_size:(i*batch_size)+batch_size]]
     if addys == []: break
-    try: 
+    try:
       address_result = get_geodata(addys, apikey)
-      addresses = address.append({"lat":address_result["Latitude"], "lon":address_result["Longitude"], "type":address_result["ResidenceType"] if "ResidenceType" in address_result else "INTERSECTION"}, ignore_index=True)
+      addresses.loc[len(addresses)] = {"lat":address_result["Latitude"], "lon":address_result["Longitude"], "type":address_result["ResidenceType"] if "ResidenceType" in address_result else "INTERSECTION"}
     # When something breaks, test each individually
     except Exception as e:
       for addy in addys:
         try: 
           address_result = get_geodata(addy, apikey)
-          addresses = addresses.append({"lat":address_result["Latitude"], "lon":address_result["Longitude"], "type":address_result["ResidenceType"] if "ResidenceType" in address_result else "INTERSECTION"}, ignore_index=True)
+          addresses.loc[len(addresses)] = {"lat":address_result["Latitude"], "lon":address_result["Longitude"], "type":address_result["ResidenceType"] if "ResidenceType" in address_result else "INTERSECTION"}
         except Exception as e2:
           print(e2)
-          addresses = addresses.append({"lat":np.nan, "lon":np.nan, "type":np.nan}, ignore_index=True)
+          addresses.loc[len(addresses)] = {"lat":np.nan, "lon":np.nan, "type":np.nan}
           print("Address failure:", addy)
   return addresses
 
@@ -192,10 +192,10 @@ def get_clusters(points, cluster_radius_miles=0.5, cluster_number_points=5):
 # takes dataframe[[lon,lat]]
 def get_ward(points):
   geo_points = gpd.GeoDataFrame(points, geometry = gpd.points_from_xy(points["lon"].to_list(), points["lat"].to_list()))
-  w_area = gpd.read_file(pkg_resources.resource_filename('dcgeotools', 'shapefiles/Wards_from_2022.shp'))
+  # w_area = gpd.read_file(pkg_resources.resource_filename('dcgeotools', 'shapefiles/Wards_from_2022.shp'))
+  w_area = gpd.read_file('shapefiles/Wards_from_2022.shp')
   w_results = gpd.sjoin(geo_points, w_area)[["geometry", "index_right"]].rename(columns={"index_right":"ward"})
   w_results["ward"] = w_results["ward"].replace([0,1,2,3,4,5,6,7],[8,6,7,2,1,5,3,4])
-  w_results = w_results
   return w_results
 
 # takes dataframe[[lon,lat]]
@@ -206,3 +206,22 @@ def get_nhood(points):
   n_results = gpd.sjoin(geo_points, n_area)[["geometry","index_right"]].rename(columns={"index_right":"nhood"})
   n_results["nhood"] = [ordered_dc_neighborhoods[i] for i in n_results["nhood"].to_list()]
   return n_results
+
+# takes dataframe[[lon,lat]]
+def get_zipcode(points):
+  geo_points = gpd.GeoDataFrame(points, geometry = gpd.points_from_xy(points["lon"].to_list(), points["lat"].to_list()))
+  z_area = gpd.read_file(pkg_resources.resource_filename('dcgeotools', 'shapefiles/Zip_Codes.shp'))
+  z_results = gpd.sjoin(geo_points, z_area)[["geometry", "index_right"]].rename(columns={"index_right":"zipcode"})
+  zipcodes = [20012,20015,20306,20011,20040,20039,20008,20016,20017,20018,20317,20542,20528,20064,20010,20009,20422,20001,20007,20059,20002,20392,20441,20260,20060,20019,20056,20242,20036,20005,20057,20037,20440,20419,20581,20071,20223,20524,20526,20507,20043,20570,20006,20437,20572,20427,20433,20268,20426,20052,20420,20571,20536,20062,20530,20211,20573,20527,20431,20401,20506,20404,20402,20503,20439,20403,20577,20560,20548,20529,20220,20314,20004,20013,20229,20444,20535,20552,20425,20212,20500,20549,20508,20509,20501,20502,20222,20405,20505,20045,20429,20208,20566,20544,20221,20463,20226,20239,20049,20442,20217,20372,20415,20240,20451,20520,20534,20460,20510,20523,20522,20224,20230,20521,20408,20551,20418,20210,20003,20580,20245,20213,20215,20216,20565,20543,20515,20024,20540,20250,20591,20597,20201,20237,20202,20585,20594,20553,20319,20557,20559,20228,20547,20472,20407,20410,20227,20416,20026,20261,20423,20554,20412,20411,20546,20436,20254,20020,20390,20374,20590,20376,20398,20388,20373,20593,20030,20032,20340,20375]
+  z_results["zipcode"] = z_results["zipcode"].apply(lambda x: zipcodes[x])
+  return z_results
+
+# takes dataframe[[lon,lat]]
+def get_census(points):
+  geo_points = gpd.GeoDataFrame(points, geometry = gpd.points_from_xy(points["lon"].to_list(), points["lat"].to_list()))
+  c_area = gpd.read_file(pkg_resources.resource_filename('dcgeotools', 'shapefiles/Census_Block_Groups_in_2020.shp'))
+  c_results = gpd.sjoin(geo_points, c_area)[["geometry", "index_right"]].rename(columns={"index_right":"census"})
+  census = [202,202,202,202,300,300,300,300,400,400,501,501,501,502,502,600,600,600,600,702,702,702,703,703,704,704,802,802,803,803,803,804,804,101,102,102,102,1500,201,201,1200,1301,1301,1301,1301,1303,1303,1303,1303,1304,1304,1304,1304,1401,1401,1402,1402,1402,804,902,902,9902,903,903,9811,904,9901,9901,904,1002,9902,1002,1002,1002,1003,1003,1003,1004,1004,1004,1100,1100,1100,1100,1200,1200,1200,2101,2102,2102,2102,2102,2102,2102,2201,2201,2201,2202,2202,2202,2301,2301,1500,1500,9903,1500,1500,1600,1600,1600,1600,1702,1702,1803,1803,1803,1804,1804,1804,1901,1901,1901,1901,1902,1902,2001,2001,2002,2002,2002,2101,2101,2101,2101,3200,3200,3200,3200,3301,3301,3301,3302,3302,3400,3400,3400,3400,3400,3500,2302,2302,2302,2400,2400,2400,2400,2501,2501,2503,2503,2504,2504,2600,2600,2702,2702,2702,2702,2703,2703,2704,2704,2801,2801,2802,2802,2802,2900,2900,3000,3000,3100,3100,4300,4300,4300,4300,4401,4401,4401,4402,4402,4600,4600,4702,4702,4702,4702,4702,4703,4703,4703,4703,4704,3500,3500,3600,3600,3600,3701,3701,3702,3702,3801,3801,3802,3802,3802,3901,3901,3902,3902,4001,4001,4001,4001,4002,4002,4002,4100,4100,4100,4201,4201,4201,4202,4202,5601,5602,5602,5602,5801,5801,5802,5802,5802,5802,5802,5900,5900,6400,6400,6500,4704,4801,4801,4801,9903,4802,4802,4901,4901,4901,4902,4902,4902,5001,5001,5003,5003,5004,5004,5004,5202,5202,5202,5203,5203,5203,5302,5302,5302,5303,5303,5303,5501,5501,5502,5502,5502,5503,5503,5601,5601,7401,7401,7403,7403,7404,7404,7404,7406,7406,11001,7407,7407,11001,6500,6600,6600,6700,6700,6700,6801,6801,6802,6802,6804,6900,6900,7000,10900,10900,7000,7100,7100,7100,7201,7201,7201,7201,7202,7202,7202,7203,7203,7203,7203,7301,7301,7301,7304,7304,7304,7304,7604,7604,9301,7604,7604,7605,7605,7605,7605,9000,7703,7703,7703,7703,7407,7408,9102,7408,7409,7409,7409,7502,7502,7502,7503,9302,7503,7504,8702,7504,7601,7601,9201,7601,7601,7601,7603,7603,8702,7603,7603,7708,7709,7901,7901,7901,7709,7803,7803,7901,7903,8001,8001,7803,7803,7804,8702,8001,8002,8002,8100,7804,7804,8100,8100,8200,8200,7806,7806,8200,8200,8301,8301,7807,7807,8302,8302,8302,8402,7808,7808,7707,7707,7808,7809,7809,7707,7708,8402,8410,8701,8701,9000,9102,9400,9400,8802,8802,8802,8802,9102,9102,9400,9400,8803,8803,9201,9203,9602,9503,9503,8804,8804,8903,8903,11002,9203,9204,9204,9503,9504,9504,8903,8904,8904,9802,11001,9301,9301,9301,9505,9505,9508,8904,9000,9803,9803,9810,9810,11002,9508,9509,9602,9602,9603,9803,9804,9811,9811,9509,9509,9603,9603,9604,9604,9804,9807,9505,9507,9510,9510,9700,9700,9700,9807,9807,9508,9508,9510,9511,9601,9801,9802,10601,10601,10602,10602,10602,10602,10603,10603,10603,10700,10700,10800,10800,10800,10800,10800,10800,9904,9904,9904,9905,9905,9905,9906,9907,9907,10100,10100,10100,10201,10201,10201,10202,10202,10202,10202,10202,10202,10300,10300,10300,10400,10400,10400,10500,10500,10500,10500,10500,11100,11100,11100,980000]
+  c_results["census"] = c_results["census"].apply(lambda x: census[x])
+  return c_results
+  
